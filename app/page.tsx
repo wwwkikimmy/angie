@@ -25,7 +25,6 @@ import {
   AlertCircle,
   Trash2,
   Send,
-  Bot,
   User,
   MessageCircle,
   Sparkles,
@@ -1138,9 +1137,20 @@ export default function KingstonDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 relative">
+      {/* Angie Background Image */}
+      <div
+        className="fixed inset-0 bg-no-repeat opacity-20 pointer-events-none z-0"
+        style={{
+          backgroundImage: "url('/images/angie-background.jpg')",
+          backgroundPosition: "center top",
+          backgroundSize: "auto 100%",
+          backgroundAttachment: "fixed",
+        }}
+      />
+
       {/* Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
+      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40 relative">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -1193,7 +1203,7 @@ export default function KingstonDashboard() {
 
       <div className="flex">
         {/* Main Content */}
-        <main className={`flex-1 transition-all duration-300 ${showChat ? "mr-96" : ""}`}>
+        <main className={`flex-1 transition-all duration-300 ${showChat ? "mr-96" : ""} relative z-10`}>
           <div className="container mx-auto px-4 py-8">
             {/* Welcome Section */}
             <div className="mb-8 text-center">
@@ -1703,10 +1713,12 @@ export default function KingstonDashboard() {
             <div className="p-4 border-b bg-gradient-to-r from-blue-600 to-purple-600 text-white">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Bot className="h-6 w-6" />
+                  <div className="h-8 w-8 rounded-full overflow-hidden bg-white border-2 border-white/20">
+                    <img src="/images/angie-avatar.png" alt="Angie" className="w-full h-full object-cover" />
+                  </div>
                   <div>
                     <h3 className="font-semibold">Angie - Your Kingston Assistant</h3>
-                    <p className="text-sm opacity-90">Here to help you settle in!</p>
+                    <p className="text-sm opacity-90">Here to help you settle in! ✨</p>
                   </div>
                 </div>
                 <Button
@@ -1724,9 +1736,9 @@ export default function KingstonDashboard() {
               {messages.map((message, index) => (
                 <div key={index} className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                   {message.role === "assistant" && (
-                    <Avatar className="h-8 w-8 bg-gradient-to-r from-blue-600 to-purple-600">
-                      <AvatarFallback className="text-white">A</AvatarFallback>
-                    </Avatar>
+                    <div className="h-8 w-8 rounded-full overflow-hidden bg-white border border-gray-200 flex-shrink-0">
+                      <img src="/images/angie-avatar.png" alt="Angie" className="w-full h-full object-cover" />
+                    </div>
                   )}
                   <div
                     className={`max-w-[80%] rounded-lg p-3 ${
@@ -1749,9 +1761,9 @@ export default function KingstonDashboard() {
 
               {isLoading && (
                 <div className="flex gap-3 justify-start">
-                  <Avatar className="h-8 w-8 bg-gradient-to-r from-blue-600 to-purple-600">
-                    <AvatarFallback className="text-white">A</AvatarFallback>
-                  </Avatar>
+                  <div className="h-8 w-8 rounded-full overflow-hidden bg-white border border-gray-200 flex-shrink-0">
+                    <img src="/images/angie-avatar.png" alt="Angie" className="w-full h-full object-cover" />
+                  </div>
                   <div className="bg-gray-100 rounded-lg p-3">
                     <div className="flex space-x-1">
                       <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>

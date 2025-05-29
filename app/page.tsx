@@ -21,11 +21,8 @@ import {
   Users,
   Star,
   Phone,
-  Mail,
   AlertCircle,
   Trash2,
-  Send,
-  User,
   MessageCircle,
   Sparkles,
   TrendingUp,
@@ -69,51 +66,6 @@ export default function KingstonDashboard() {
         role: "assistant",
         content:
           "Hi! My name is Angie, and I will be your personal assistant to settle in Kingston! 👋 I'm here to help you find the perfect job, housing, social events, and answer any questions about living in Kingston as a young professional. What would you like to explore first?",
-      },
-      {
-        id: "demo-question",
-        role: "user",
-        content: "marketing jobs recommendation in kingston",
-      },
-      {
-        id: "demo-response",
-        role: "assistant",
-        content: `Great question! Kingston has a growing marketing scene with excellent opportunities for young professionals. Here are my top recommendations:
-
-🎯 **Top Marketing Opportunities:**
-
-**Queen's University** - Marketing Coordinator positions
-• Salary: $45,000-$55,000
-• Great benefits and campus environment
-• Experience with academic marketing campaigns
-
-**Kingston Tourism** - Digital Marketing Specialist
-• Salary: $40,000-$52,000
-• Promote beautiful Kingston to visitors
-• Social media and content creation focus
-
-**City of Kingston** - Communications & Marketing roles
-• Salary: $50,000-$65,000
-• Government benefits package
-• Community engagement and public relations
-
-**Local Startups (Innovation Park)** - Growth Marketing roles
-• Salary: $45,000-$60,000
-• Equity opportunities
-• Fast-paced, tech-focused environment
-
-**Healthcare Marketing** - Kingston Health Sciences Centre
-• Salary: $48,000-$58,000
-• Healthcare communications
-• Stable, meaningful work
-
-💡 **Pro Tips for Marketing Jobs in Kingston:**
-• Network at Young Professionals Kingston events
-• Join the Kingston Chamber of Commerce
-• Consider freelance work to build local connections
-• Queen's alumni network is very strong here
-
-Would you like me to help you find specific job postings or tell you more about any of these opportunities?`,
       },
     ],
     onError: (error) => {
@@ -1187,12 +1139,11 @@ Would you like me to help you find specific job postings or tell you more about 
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 relative">
       {/* Angie Background Image */}
       <div
-        className="fixed inset-0 bg-no-repeat opacity-20 pointer-events-none z-0"
+        className="fixed top-20 left-0 w-64 h-64 bg-no-repeat pointer-events-none z-0"
         style={{
           backgroundImage: "url('/images/angie-background.jpg')",
-          backgroundPosition: "center top",
-          backgroundSize: "auto 100%",
-          backgroundAttachment: "fixed",
+          backgroundPosition: "top left",
+          backgroundSize: "contain",
         }}
       />
 
@@ -1707,38 +1658,32 @@ Would you like me to help you find specific job postings or tell you more about 
                       Report Item
                     </Button>
                   </div>
-                  <div className="grid gap-4">
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {filteredLostFound.length === 0 && searchQuery ? (
-                      <div className="text-center py-8 text-gray-500">
+                      <div className="col-span-full text-center py-8 text-gray-500">
                         No lost & found items found for "{searchQuery}". Try a different search term.
                       </div>
                     ) : (
                       filteredLostFound.map((item) => (
                         <Card key={item.id} className="hover:shadow-lg transition-shadow bg-white/70 backdrop-blur-sm">
                           <CardHeader>
-                            <div className="flex justify-between items-start">
-                              <CardTitle className="text-lg">{item.item}</CardTitle>
-                              <Badge variant={item.type === "Lost" ? "destructive" : "default"}>{item.type}</Badge>
-                            </div>
+                            <CardTitle className="text-lg">
+                              {item.type}: {item.item}
+                            </CardTitle>
+                            <CardDescription className="text-sm text-gray-500">
+                              Location: {item.location} • Date: {item.date}
+                            </CardDescription>
                           </CardHeader>
                           <CardContent className="space-y-3">
                             <p className="text-sm text-gray-600">{item.description}</p>
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
-                              <div className="flex items-center gap-2">
-                                <MapPin className="h-4 w-4 text-gray-500" />
-                                {item.location}
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Calendar className="h-4 w-4 text-gray-500" />
-                                {item.date}
-                              </div>
-                              <div className="flex items-center gap-2">
-                                <Mail className="h-4 w-4 text-gray-500" />
-                                {item.contact}
-                              </div>
+                            <div className="flex items-center gap-2 text-sm">
+                              <Phone className="h-4 w-4 text-gray-500" />
+                              Contact: {item.contact}
                             </div>
                             <div className="flex gap-2">
-                              <Button className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600">Contact</Button>
+                              <Button className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600">
+                                Contact Finder
+                              </Button>
                               <Button size="sm" variant="destructive" onClick={() => handleDeleteLostFound(item.id)}>
                                 <Trash2 className="h-4 w-4" />
                               </Button>
@@ -1754,418 +1699,568 @@ Would you like me to help you find specific job postings or tell you more about 
           </div>
         </main>
 
-        {/* AI Chat Sidebar */}
-        {showChat && (
-          <div className="fixed right-0 top-0 h-full w-96 bg-white border-l shadow-xl z-50 flex flex-col">
-            <div className="p-4 border-b bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full overflow-hidden bg-white border-2 border-white/20">
-                    <img src="/images/angie-avatar.png" alt="Angie" className="w-full h-full object-cover" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold">Angie - Your Kingston Assistant</h3>
-                    <p className="text-sm opacity-90">Here to help you settle in! ✨</p>
-                  </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowChat(false)}
-                  className="text-white hover:bg-white/20"
-                >
-                  ×
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-4 space-y-4">
-              {messages.map((message, index) => (
-                <div key={index} className={`flex gap-3 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                  {message.role === "assistant" && (
-                    <div className="h-8 w-8 rounded-full overflow-hidden bg-white border border-gray-200 flex-shrink-0">
-                      <img src="/images/angie-avatar.png" alt="Angie" className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                  <div
-                    className={`max-w-[80%] rounded-lg p-3 ${
-                      message.role === "user"
-                        ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white"
-                        : "bg-gray-100 text-gray-900"
-                    }`}
-                  >
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                  </div>
-                  {message.role === "user" && (
-                    <Avatar className="h-8 w-8 bg-gray-300">
-                      <AvatarFallback>
-                        <User className="h-4 w-4" />
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
-                </div>
-              ))}
-
-              {isLoading && (
-                <div className="flex gap-3 justify-start">
-                  <div className="h-8 w-8 rounded-full overflow-hidden bg-white border border-gray-200 flex-shrink-0">
-                    <img src="/images/angie-avatar.png" alt="Angie" className="w-full h-full object-cover" />
-                  </div>
-                  <div className="bg-gray-100 rounded-lg p-3">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div
-                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.1s" }}
-                      ></div>
-                      <div
-                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.2s" }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {error && (
-                <div className="flex gap-3 justify-start">
-                  <Avatar className="h-8 w-8 bg-red-500">
-                    <AvatarFallback className="text-white">!</AvatarFallback>
-                  </Avatar>
-                  <div className="bg-red-100 rounded-lg p-3 max-w-[80%]">
-                    <p className="text-sm text-red-800">
-                      Sorry, I'm having trouble connecting right now. Please try again in a moment.
-                    </p>
-                  </div>
-                </div>
-              )}
-              <div ref={chatEndRef} />
-            </div>
-
-            <div className="p-4 border-t">
-              <form onSubmit={handleSubmit} className="flex gap-2">
-                <Input
-                  value={input}
-                  onChange={handleInputChange}
-                  placeholder="Ask Angie anything about Kingston..."
-                  className="flex-1"
-                  disabled={isLoading}
-                />
-                <Button
-                  type="submit"
-                  disabled={!input.trim() || isLoading}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600"
-                >
-                  <Send className="h-4 w-4" />
-                </Button>
-              </form>
-            </div>
+        {/* Chat Sidebar */}
+        <aside
+          className={`bg-white border-l w-96 fixed top-0 right-0 h-full overflow-y-auto p-4 transition-transform duration-300 transform ${
+            showChat ? "translate-x-0" : "translate-x-full"
+          } z-50`}
+        >
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-xl font-semibold">Chat with Angie</h3>
+            <Button variant="ghost" size="icon" onClick={() => setShowChat(false)}>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-4 w-4"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
+              </svg>
+            </Button>
           </div>
-        )}
-
-        {/* Modal for forms */}
-        {activeModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg max-w-md w-full mx-4">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">
-                  {activeModal === "job" && "Post a Job"}
-                  {activeModal === "event" && "Create Event"}
-                  {activeModal === "rental" && "List Property"}
-                  {activeModal === "marketplace" && "Sell Item"}
-                  {activeModal === "service" && "List Service"}
-                  {activeModal === "lost-found" && "Report Item"}
-                </h3>
-                <Button variant="ghost" size="sm" onClick={handleCloseModal}>
-                  ×
-                </Button>
-              </div>
-
-              <div className="space-y-4">
-                {activeModal === "job" && (
-                  <>
-                    <Input
-                      placeholder="Job Title"
-                      value={formData.title || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Company Name"
-                      value={formData.company || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, company: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Location"
-                      value={formData.location || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Salary Range"
-                      value={formData.salary || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, salary: e.target.value }))}
-                    />
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="remote"
-                        checked={formData.remote || false}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, remote: e.target.checked }))}
-                      />
-                      <label htmlFor="remote" className="text-sm">
-                        Remote work available
-                      </label>
-                    </div>
-                    <textarea
-                      className="w-full p-2 border rounded"
-                      placeholder="Job Description"
-                      rows={3}
-                      value={formData.description || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-                    />
-                  </>
-                )}
-
-                {activeModal === "event" && (
-                  <>
-                    <Input
-                      placeholder="Event Title"
-                      value={formData.title || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Date"
-                      type="date"
-                      value={formData.date || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, date: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Time"
-                      type="time"
-                      value={formData.time || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, time: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Location"
-                      value={formData.location || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Category"
-                      value={formData.category || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Age Group (e.g., 25-35)"
-                      value={formData.ageGroup || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, ageGroup: e.target.value }))}
-                    />
-                    <textarea
-                      className="w-full p-2 border rounded"
-                      placeholder="Event Description"
-                      rows={3}
-                      value={formData.description || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-                    />
-                  </>
-                )}
-
-                {activeModal === "rental" && (
-                  <>
-                    <Input
-                      placeholder="Property Title"
-                      value={formData.title || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Monthly Rent"
-                      value={formData.price || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Location"
-                      value={formData.location || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Bedrooms"
-                      type="number"
-                      value={formData.bedrooms || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, bedrooms: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Bathrooms"
-                      type="number"
-                      value={formData.bathrooms || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, bathrooms: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Walk Score (1-100)"
-                      type="number"
-                      value={formData.walkScore || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, walkScore: e.target.value }))}
-                    />
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="nearTransit"
-                        checked={formData.nearTransit || false}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, nearTransit: e.target.checked }))}
-                      />
-                      <label htmlFor="nearTransit" className="text-sm">
-                        Near public transit
-                      </label>
-                    </div>
-                    <Input
-                      placeholder="Available Date"
-                      type="date"
-                      value={formData.available || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, available: e.target.value }))}
-                    />
-                    <textarea
-                      className="w-full p-2 border rounded"
-                      placeholder="Property Description"
-                      rows={3}
-                      value={formData.description || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-                    />
-                  </>
-                )}
-
-                {activeModal === "marketplace" && (
-                  <>
-                    <Input
-                      placeholder="Item Title"
-                      value={formData.title || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, title: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Price"
-                      value={formData.price || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, price: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Category"
-                      value={formData.category || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Condition"
-                      value={formData.condition || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, condition: e.target.value }))}
-                    />
-                    <textarea
-                      className="w-full p-2 border rounded"
-                      placeholder="Item Description"
-                      rows={3}
-                      value={formData.description || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-                    />
-                  </>
-                )}
-
-                {activeModal === "service" && (
-                  <>
-                    <Input
-                      placeholder="Service Name"
-                      value={formData.name || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, name: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Category"
-                      value={formData.category || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, category: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Phone Number"
-                      value={formData.phone || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, phone: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Email"
-                      value={formData.email || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
-                    />
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="checkbox"
-                        id="youngProfessionalFriendly"
-                        checked={formData.youngProfessionalFriendly || false}
-                        onChange={(e) =>
-                          setFormData((prev) => ({ ...prev, youngProfessionalFriendly: e.target.checked }))
-                        }
-                      />
-                      <label htmlFor="youngProfessionalFriendly" className="text-sm">
-                        Young Professional Friendly
-                      </label>
-                    </div>
-                    <textarea
-                      className="w-full p-2 border rounded"
-                      placeholder="Service Description"
-                      rows={3}
-                      value={formData.description || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-                    />
-                  </>
-                )}
-
-                {activeModal === "lost-found" && (
-                  <>
-                    <select
-                      className="w-full p-2 border rounded"
-                      value={formData.type || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, type: e.target.value }))}
-                    >
-                      <option value="">Select Type</option>
-                      <option value="lost">Lost</option>
-                      <option value="found">Found</option>
-                    </select>
-                    <Input
-                      placeholder="Item Description"
-                      value={formData.item || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, item: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Location"
-                      value={formData.location || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, location: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Date"
-                      type="date"
-                      value={formData.date || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, date: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Contact Information"
-                      value={formData.contact || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, contact: e.target.value }))}
-                    />
-                    <textarea
-                      className="w-full p-2 border rounded"
-                      placeholder="Additional Details"
-                      rows={3}
-                      value={formData.description || ""}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-                    />
-                  </>
-                )}
-
-                <div className="flex gap-2 pt-4">
-                  <Button
-                    onClick={() => handleSubmitForm(activeModal)}
-                    className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600"
-                  >
-                    Submit
-                  </Button>
-                  <Button variant="outline" onClick={handleCloseModal} className="flex-1">
-                    Cancel
-                  </Button>
+          <div className="space-y-4">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex flex-col ${message.role === "user" ? "items-end" : "items-start"}`}
+              >
+                <div
+                  className={`rounded-lg px-3 py-2 text-sm ${
+                    message.role === "user" ? "bg-blue-100 text-blue-800" : "bg-gray-100 text-gray-800"
+                  }`}
+                >
+                  {message.content}
                 </div>
               </div>
-            </div>
+            ))}
+            <div ref={chatEndRef} />
           </div>
-        )}
+          <form onSubmit={handleSubmit} className="mt-4">
+            <div className="flex space-x-2">
+              <Input
+                placeholder="Ask Angie anything..."
+                value={input}
+                onChange={handleInputChange}
+                className="flex-1"
+              />
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                {isLoading ? "Sending..." : "Send"}
+              </Button>
+            </div>
+            {error && <div className="text-red-500 mt-2 text-sm">Error: {error.message}</div>}
+          </form>
+        </aside>
       </div>
+
+      {/* Modals */}
+      {activeModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+          <Card className="max-w-2xl w-full bg-white/90">
+            <CardHeader>
+              <CardTitle className="text-2xl font-bold">
+                {activeModal === "job" && "Post a Job"}
+                {activeModal === "event" && "Create Event"}
+                {activeModal === "rental" && "List Property"}
+                {activeModal === "marketplace" && "Sell Item"}
+                {activeModal === "service" && "List Service"}
+                {activeModal === "lost-found" && "Report Item"}
+              </CardTitle>
+              <CardDescription>
+                {activeModal === "job" && "Enter the details of the job you want to post."}
+                {activeModal === "event" && "Enter the details of the event you want to create."}
+                {activeModal === "rental" && "Enter the details of the property you want to list."}
+                {activeModal === "marketplace" && "Enter the details of the item you want to sell."}
+                {activeModal === "service" && "Enter the details of the service you want to list."}
+                {activeModal === "lost-found" && "Enter the details of the item you want to report."}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              {activeModal === "job" && (
+                <>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="title"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Job Title
+                    </label>
+                    <Input
+                      id="title"
+                      placeholder="Software Engineer"
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="company"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Company
+                    </label>
+                    <Input
+                      id="company"
+                      placeholder="Acme Corp"
+                      onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="location"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Location
+                    </label>
+                    <Input
+                      id="location"
+                      placeholder="Kingston, ON"
+                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="salary"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Salary
+                    </label>
+                    <Input
+                      id="salary"
+                      placeholder="$60,000 - $80,000"
+                      onChange={(e) => setFormData({ ...formData, salary: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label htmlFor="type" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed">
+                      Job Type
+                    </label>
+                    <Input
+                      id="type"
+                      placeholder="Full-time"
+                      onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="remote"
+                      className="h-4 w-4"
+                      onChange={(e) => setFormData({ ...formData, remote: e.target.checked })}
+                    />
+                    <label
+                      htmlFor="remote"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Remote OK
+                    </label>
+                  </div>
+                </>
+              )}
+
+              {activeModal === "event" && (
+                <>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="title"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Event Title
+                    </label>
+                    <Input
+                      id="title"
+                      placeholder="Kingston Tech Meetup"
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label htmlFor="date" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed">
+                      Date
+                    </label>
+                    <Input id="date" type="date" onChange={(e) => setFormData({ ...formData, date: e.target.value })} />
+                  </div>
+                  <div className="grid gap-2">
+                    <label htmlFor="time" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed">
+                      Time
+                    </label>
+                    <Input id="time" type="time" onChange={(e) => setFormData({ ...formData, time: e.target.value })} />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="location"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Location
+                    </label>
+                    <Input
+                      id="location"
+                      placeholder="Innovation Park"
+                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="category"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Category
+                    </label>
+                    <Input
+                      id="category"
+                      placeholder="Tech"
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="ageGroup"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Age Group
+                    </label>
+                    <Input
+                      id="ageGroup"
+                      placeholder="25-35"
+                      onChange={(e) => setFormData({ ...formData, ageGroup: e.target.value })}
+                    />
+                  </div>
+                </>
+              )}
+
+              {activeModal === "rental" && (
+                <>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="title"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Property Title
+                    </label>
+                    <Input
+                      id="title"
+                      placeholder="Modern 1BR Apartment"
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="price"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Price
+                    </label>
+                    <Input
+                      id="price"
+                      placeholder="$1,500/month"
+                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="location"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Location
+                    </label>
+                    <Input
+                      id="location"
+                      placeholder="Downtown Kingston"
+                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="bedrooms"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Bedrooms
+                    </label>
+                    <Input
+                      id="bedrooms"
+                      type="number"
+                      placeholder="1"
+                      onChange={(e) => setFormData({ ...formData, bedrooms: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="bathrooms"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Bathrooms
+                    </label>
+                    <Input
+                      id="bathrooms"
+                      type="number"
+                      placeholder="1"
+                      onChange={(e) => setFormData({ ...formData, bathrooms: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="available"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Available Date
+                    </label>
+                    <Input
+                      id="available"
+                      type="date"
+                      onChange={(e) => setFormData({ ...formData, available: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="walkScore"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Walk Score
+                    </label>
+                    <Input
+                      id="walkScore"
+                      type="number"
+                      placeholder="85"
+                      onChange={(e) => setFormData({ ...formData, walkScore: e.target.value })}
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="nearTransit"
+                      className="h-4 w-4"
+                      onChange={(e) => setFormData({ ...formData, nearTransit: e.target.checked })}
+                    />
+                    <label
+                      htmlFor="nearTransit"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Near Transit
+                    </label>
+                  </div>
+                </>
+              )}
+
+              {activeModal === "marketplace" && (
+                <>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="title"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Item Title
+                    </label>
+                    <Input
+                      id="title"
+                      placeholder="MacBook Pro 2021"
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="price"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Price
+                    </label>
+                    <Input
+                      id="price"
+                      placeholder="$1,200"
+                      onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="condition"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Condition
+                    </label>
+                    <Input
+                      id="condition"
+                      placeholder="Excellent"
+                      onChange={(e) => setFormData({ ...formData, condition: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="category"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Category
+                    </label>
+                    <Input
+                      id="category"
+                      placeholder="Electronics"
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    />
+                  </div>
+                </>
+              )}
+
+              {activeModal === "service" && (
+                <>
+                  <div className="grid gap-2">
+                    <label htmlFor="name" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed">
+                      Service Name
+                    </label>
+                    <Input
+                      id="name"
+                      placeholder="Kingston Moving Pros"
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="category"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Category
+                    </label>
+                    <Input
+                      id="category"
+                      placeholder="Moving"
+                      onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="phone"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Phone Number
+                    </label>
+                    <Input
+                      id="phone"
+                      placeholder="(613) 555-0123"
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="description"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Description
+                    </label>
+                    <Input
+                      id="description"
+                      placeholder="Helping young professionals relocate to Kingston"
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="youngProfessionalFriendly"
+                      className="h-4 w-4"
+                      onChange={(e) => setFormData({ ...formData, youngProfessionalFriendly: e.target.checked })}
+                    />
+                    <label
+                      htmlFor="youngProfessionalFriendly"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Young Professional Friendly
+                    </label>
+                  </div>
+                </>
+              )}
+
+              {activeModal === "lost-found" && (
+                <>
+                  <div className="grid gap-2">
+                    <label htmlFor="type" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed">
+                      Type
+                    </label>
+                    <select
+                      id="type"
+                      className="border rounded px-2 py-1"
+                      onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                    >
+                      <option value="Lost">Lost</option>
+                      <option value="Found">Found</option>
+                    </select>
+                  </div>
+                  <div className="grid gap-2">
+                    <label htmlFor="item" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed">
+                      Item
+                    </label>
+                    <Input
+                      id="item"
+                      placeholder="AirPods Pro"
+                      onChange={(e) => setFormData({ ...formData, item: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="location"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Location
+                    </label>
+                    <Input
+                      id="location"
+                      placeholder="Queen's Campus"
+                      onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label htmlFor="date" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed">
+                      Date
+                    </label>
+                    <Input id="date" type="date" onChange={(e) => setFormData({ ...formData, date: e.target.value })} />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="contact"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Contact
+                    </label>
+                    <Input
+                      id="contact"
+                      placeholder="jane@email.com"
+                      onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label
+                      htmlFor="description"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed"
+                    >
+                      Description
+                    </label>
+                    <Input
+                      id="description"
+                      placeholder="Lost during morning jog, reward offered"
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    />
+                  </div>
+                </>
+              )}
+            </CardContent>
+            <div className="flex justify-end space-x-2 p-4">
+              <Button variant="secondary" onClick={handleCloseModal}>
+                Cancel
+              </Button>
+              <Button
+                onClick={() => handleSubmitForm(activeModal)}
+                className="bg-gradient-to-r from-blue-600 to-purple-600"
+              >
+                Submit
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }

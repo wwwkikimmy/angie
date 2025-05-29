@@ -1,45 +1,17 @@
 import { streamText } from "ai"
-import { createOpenAI } from "@ai-sdk/openai"
-
-// Create DeepSeek client using OpenAI-compatible API
-let deepseek: any = null
-
-try {
-  deepseek = createOpenAI({
-    name: "deepseek",
-    apiKey: process.env.DEEPSEEK_API_KEY,
-    baseURL: "https://api.deepseek.com/v1",
-  })
-} catch (error) {
-  console.error("Failed to create DeepSeek client:", error)
-}
+import { groq } from "@ai-sdk/groq"
 
 export async function POST(req: Request) {
   try {
     console.log("=== Chat API Request Started ===")
 
     // Check if API key exists
-    if (!process.env.DEEPSEEK_API_KEY) {
-      console.error("DEEPSEEK_API_KEY is not set")
+    if (!process.env.GROQ_API_KEY) {
+      console.error("GROQ_API_KEY is not set")
       return new Response(
         JSON.stringify({
           error: "API key not configured",
           code: "NO_API_KEY",
-        }),
-        {
-          status: 500,
-          headers: { "Content-Type": "application/json" },
-        },
-      )
-    }
-
-    // Check if client was created successfully
-    if (!deepseek) {
-      console.error("DeepSeek client not initialized")
-      return new Response(
-        JSON.stringify({
-          error: "AI service not available",
-          code: "CLIENT_INIT_FAILED",
         }),
         {
           status: 500,
@@ -67,7 +39,7 @@ export async function POST(req: Request) {
     console.log("Creating streamText with DeepSeek...")
 
     const result = streamText({
-      model: deepseek("deepseek-chat"),
+      model: groq("llama3-8b-8192"),
       messages,
       system: `You are Angie, a friendly AI assistant specifically designed to help young professionals settle into Kingston, Ontario, Canada. You have extensive knowledge about:
 

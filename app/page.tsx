@@ -43,11 +43,11 @@ export default function KingstonDashboard() {
   const [testResult, setTestResult] = useState<string | null>(null)
   const chatEndRef = useRef<HTMLDivElement>(null)
 
-  // Test DeepSeek connection
+  // Test Groq connection
   const testConnection = async () => {
     try {
       setTestResult("Testing...")
-      const response = await fetch("/api/test-deepseek")
+      const response = await fetch("/api/test-groq")
       const data = await response.json()
 
       if (data.success) {
@@ -70,9 +70,56 @@ export default function KingstonDashboard() {
         content:
           "Hi! My name is Angie, and I will be your personal assistant to settle in Kingston! 👋 I'm here to help you find the perfect job, housing, social events, and answer any questions about living in Kingston as a young professional. What would you like to explore first?",
       },
+      {
+        id: "demo-question",
+        role: "user",
+        content: "marketing jobs recommendation in kingston",
+      },
+      {
+        id: "demo-response",
+        role: "assistant",
+        content: `Great question! Kingston has a growing marketing scene with excellent opportunities for young professionals. Here are my top recommendations:
+
+🎯 **Top Marketing Opportunities:**
+
+**Queen's University** - Marketing Coordinator positions
+• Salary: $45,000-$55,000
+• Great benefits and campus environment
+• Experience with academic marketing campaigns
+
+**Kingston Tourism** - Digital Marketing Specialist
+• Salary: $40,000-$52,000
+• Promote beautiful Kingston to visitors
+• Social media and content creation focus
+
+**City of Kingston** - Communications & Marketing roles
+• Salary: $50,000-$65,000
+• Government benefits package
+• Community engagement and public relations
+
+**Local Startups (Innovation Park)** - Growth Marketing roles
+• Salary: $45,000-$60,000
+• Equity opportunities
+• Fast-paced, tech-focused environment
+
+**Healthcare Marketing** - Kingston Health Sciences Centre
+• Salary: $48,000-$58,000
+• Healthcare communications
+• Stable, meaningful work
+
+💡 **Pro Tips for Marketing Jobs in Kingston:**
+• Network at Young Professionals Kingston events
+• Join the Kingston Chamber of Commerce
+• Consider freelance work to build local connections
+• Queen's alumni network is very strong here
+
+Would you like me to help you find specific job postings or tell you more about any of these opportunities?`,
+      },
     ],
     onError: (error) => {
       console.error("Chat error details:", error)
+      console.error("Error type:", typeof error)
+      console.error("Error string:", String(error))
 
       // Add a fallback response for common questions
       const lastUserMessage = messages[messages.length - 1]?.content?.toLowerCase() || ""
@@ -98,14 +145,14 @@ export default function KingstonDashboard() {
           },
         ])
       } else {
-        // Generic fallback
+        // Generic fallback with more helpful message
         setMessages((prev) => [
           ...prev,
           {
             id: Date.now().toString(),
             role: "assistant",
             content:
-              "I'm sorry, I'm having trouble connecting to my AI service right now. Please try again in a moment, or feel free to browse the different sections of the dashboard for jobs, housing, events, and more information about Kingston!",
+              "I'm sorry, I'm having trouble connecting to my AI service right now. This might be a temporary issue. Please try again in a moment, or feel free to browse the different sections of the dashboard for jobs, housing, events, and more information about Kingston!\n\nYou can also try using the 'Test Groq Connection' button above to check if the service is working.",
           },
         ])
       }
@@ -1182,7 +1229,7 @@ export default function KingstonDashboard() {
               )}
               <Button onClick={testConnection} variant="outline" size="sm" className="flex items-center gap-2">
                 <TestTube className="h-4 w-4" />
-                Test Connection
+                Test Groq Connection
               </Button>
               <Button
                 onClick={() => setShowChat(!showChat)}

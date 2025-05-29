@@ -60,14 +60,6 @@ export default function KingstonDashboard() {
   // Use the AI SDK's useChat hook
   const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, error } = useChat({
     api: "/api/chat",
-    initialMessages: [
-      {
-        id: "welcome",
-        role: "assistant",
-        content:
-          "Hi! My name is Angie, and I will be your personal assistant to settle in Kingston! 👋 I'm here to help you find the perfect job, housing, social events, and answer any questions about living in Kingston as a young professional. What would you like to explore first?",
-      },
-    ],
     onError: (error) => {
       console.error("Chat error details:", error)
       console.error("Error type:", typeof error)
@@ -111,19 +103,23 @@ export default function KingstonDashboard() {
     },
   })
 
+  const clearChatHistory = () => {
+    setMessages([])
+  }
+
   // Initialize with Angie's welcome message
-  useEffect(() => {
-    if (messages.length === 0) {
-      setMessages([
-        {
-          id: "welcome",
-          role: "assistant",
-          content:
-            "Hi! My name is Angie, and I will be your personal assistant to settle in Kingston! 👋 I'm here to help you find the perfect job, housing, social events, and answer any questions about living in Kingston as a young professional. What would you like to explore first?",
-        },
-      ])
-    }
-  }, [messages.length, setMessages])
+  // useEffect(() => {
+  //   if (messages.length === 0) {
+  //     setMessages([
+  //       {
+  //         id: "welcome",
+  //         role: "assistant",
+  //         content:
+  //           "Hi! My name is Angie, and I will be your personal assistant to settle in Kingston! 👋 I'm here to help you find the perfect job, housing, social events, and answer any questions about living in Kingston as a young professional. What would you like to explore first?",
+  //       },
+  //     ])
+  //   }
+  // }, [messages.length, setMessages])
 
   const [jobListings, setJobListings] = useState(() => {
     if (typeof window !== "undefined") {
@@ -1183,7 +1179,10 @@ export default function KingstonDashboard() {
                 Test Groq Connection
               </Button>
               <Button
-                onClick={() => setShowChat(!showChat)}
+                onClick={() => {
+                  clearChatHistory()
+                  setShowChat(!showChat)
+                }}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
               >
                 <MessageCircle className="h-4 w-4 mr-2" />
@@ -1726,20 +1725,28 @@ export default function KingstonDashboard() {
             </Button>
           </div>
           <div className="space-y-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex flex-col ${message.role === "user" ? "items-end" : "items-start"}`}
-              >
-                <div
-                  className={`rounded-lg px-3 py-2 text-sm ${
-                    message.role === "user" ? "bg-blue-100 text-blue-800" : "bg-gray-100 text-gray-800"
-                  }`}
-                >
-                  {message.content}
+            {messages.length === 0 ? (
+              <div className="flex flex-col items-start">
+                <div className="rounded-lg px-3 py-2 text-sm bg-gray-100 text-gray-800">
+                  Hi! I'm Angie, your Kingston assistant. How can I help you today?
                 </div>
               </div>
-            ))}
+            ) : (
+              messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`flex flex-col ${message.role === "user" ? "items-end" : "items-start"}`}
+                >
+                  <div
+                    className={`rounded-lg px-3 py-2 text-sm ${
+                      message.role === "user" ? "bg-blue-100 text-blue-800" : "bg-gray-100 text-gray-800"
+                    }`}
+                  >
+                    {message.content}
+                  </div>
+                </div>
+              ))
+            )}
             <div ref={chatEndRef} />
           </div>
           <form onSubmit={handleSubmit} className="mt-4">

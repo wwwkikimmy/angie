@@ -1,34 +1,5 @@
 "use client"
 
-import dynamic from "next/dynamic"
-import { Suspense } from "react"
-
-// Loading component
-function DashboardLoading() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Loading Kingston Connect...</p>
-      </div>
-    </div>
-  )
-}
-
-// Dynamically import the main dashboard component
-const DynamicKingstonDashboard = dynamic(() => import("./dashboard"), {
-  loading: () => <DashboardLoading />,
-  ssr: false,
-})
-
-export default function Page() {
-  return (
-    <Suspense fallback={<DashboardLoading />}>
-      <DynamicKingstonDashboard />
-    </Suspense>
-  )
-}
-
 import { useState, useEffect, useRef, useMemo } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -61,13 +32,19 @@ import {
   TestTube,
 } from "lucide-react"
 
-function KingstonDashboard() {
+export default function KingstonDashboard() {
+  const [mounted, setMounted] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [activeModal, setActiveModal] = useState<string | null>(null)
   const [formData, setFormData] = useState({})
   const [showChat, setShowChat] = useState(false)
   const [testResult, setTestResult] = useState<string | null>(null)
   const chatEndRef = useRef<HTMLDivElement>(null)
+
+  // Ensure component is mounted before using hooks
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Test Groq connection
   const testConnection = async () => {
@@ -86,69 +63,61 @@ function KingstonDashboard() {
     }
   }
 
-  // Use the AI SDK's useChat hook
-  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, error } = useChat({
-    api: "/api/chat",
-    onError: (error) => {
-      console.error("Chat error details:", error)
-      console.error("Error type:", typeof error)
-      console.error("Error string:", String(error))
+  // Use the AI SDK's useChat hook only after mounting
+  const chatConfig = mounted
+    ? {
+        api: "/api/chat",
+        onError: (error) => {
+          console.error("Chat error details:", error)
+          console.error("Error type:", typeof error)
+          console.error("Error string:", String(error))
 
-      // Add a fallback response for common questions
-      const lastUserMessage = messages[messages.length - 1]?.content?.toLowerCase() || ""
+          // Add a fallback response for common questions
+          const lastUserMessage = messages[messages.length - 1]?.content?.toLowerCase() || ""
 
-      if (lastUserMessage.includes("coffee") || lastUserMessage.includes("cafe")) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now().toString(),
-            role: "assistant",
-            content:
-              "I'm having trouble connecting to my AI service right now, but I can still help! For great coffee shops in Kingston:\n\n☕ **Sleepless Goat Café** - Popular with students and professionals, great WiFi\n☕ **Novel Idea Bookstore & Café** - Quiet atmosphere, perfect for focused work\n☕ **Balzac's Coffee** - Multiple locations, reliable internet\n☕ **Tim Hortons locations downtown** - Always reliable for quick work sessions\n\nMost cafés in the downtown core and near Queen's University are remote-work friendly. Would you like specific addresses or more details about any of these?",
-          },
-        ])
-      } else if (lastUserMessage.includes("housing") || lastUserMessage.includes("rent")) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now().toString(),
-            role: "assistant",
-            content:
-              "I'm having connection issues, but here's some quick housing info for Kingston:\n\n🏠 **Popular areas for young professionals:**\n• Downtown/Princess Street - walkable, nightlife\n• University District - affordable, transit access\n• Waterfront areas - scenic, quieter\n• Sydenham Ward - good value, growing area\n\n💰 **Typical rent ranges:**\n• Bachelor/Studio: $900-1,200\n• 1BR: $1,200-1,600\n• 2BR: $1,500-2,000\n• Shared housing: $600-900\n\nCheck the Housing tab above for current listings!",
-          },
-        ])
-      } else {
-        // Generic fallback with more helpful message
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: Date.now().toString(),
-            role: "assistant",
-            content:
-              "I'm sorry, I'm having trouble connecting to my AI service right now. This might be a temporary issue. Please try again in a moment, or feel free to browse the different sections of the dashboard for jobs, housing, events, and more information about Kingston!\n\nYou can also try using the 'Test Groq Connection' button above to check if the service is working.",
-          },
-        ])
+          if (lastUserMessage.includes("coffee") || lastUserMessage.includes("cafe")) {
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: Date.now().toString(),
+                role: "assistant",
+                content:
+                  "I'm having trouble connecting to my AI service right now, but I can still help! For great coffee shops in Kingston:\n\n☕ **Sleepless Goat Café** - Popular with students and professionals, great WiFi\n☕ **Novel Idea Bookstore & Café** - Quiet atmosphere, perfect for focused work\n☕ **Balzac's Coffee** - Multiple locations, reliable internet\n☕ **Tim Hortons locations downtown** - Always reliable for quick work sessions\n\nMost cafés in the downtown core and near Queen's University are remote-work friendly. Would you like specific addresses or more details about any of these?",
+              },
+            ])
+          } else if (lastUserMessage.includes("housing") || lastUserMessage.includes("rent")) {
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: Date.now().toString(),
+                role: "assistant",
+                content:
+                  "I'm having connection issues, but here's some quick housing info for Kingston:\n\n🏠 **Popular areas for young professionals:**\n• Downtown/Princess Street - walkable, nightlife\n• University District - affordable, transit access\n• Waterfront areas - scenic, quieter\n• Sydenham Ward - good value, growing area\n\n💰 **Typical rent ranges:**\n• Bachelor/Studio: $900-1,200\n• 1BR: $1,200-1,600\n• 2BR: $1,500-2,000\n• Shared housing: $600-900\n\nCheck the Housing tab above for current listings!",
+              },
+            ])
+          } else {
+            // Generic fallback with more helpful message
+            setMessages((prev) => [
+              ...prev,
+              {
+                id: Date.now().toString(),
+                role: "assistant",
+                content:
+                  "I'm sorry, I'm having trouble connecting to my AI service right now. This might be a temporary issue. Please try again in a moment, or feel free to browse the different sections of the dashboard for jobs, housing, events, and more information about Kingston!\n\nYou can also try using the 'Test Groq Connection' button above to check if the service is working.",
+              },
+            ])
+          }
+        },
       }
-    },
-  })
+    : null
+
+  const { messages, input, handleInputChange, handleSubmit, isLoading, setMessages, error } = useChat(chatConfig || {})
 
   const clearChatHistory = () => {
-    setMessages([])
+    if (mounted && setMessages) {
+      setMessages([])
+    }
   }
-
-  // Initialize with Angie's welcome message
-  // useEffect(() => {
-  //   if (messages.length === 0) {
-  //     setMessages([
-  //       {
-  //         id: "welcome",
-  //         role: "assistant",
-  //         content:
-  //           "Hi! My name is Angie, and I will be your personal assistant to settle in Kingston! 👋 I'm here to help you find the perfect job, housing, social events, and answer any questions about living in Kingston as a young professional. What would you like to explore first?",
-  //       },
-  //     ])
-  //   }
-  // }, [messages.length, setMessages])
 
   const [jobListings, setJobListings] = useState(() => {
     if (typeof window !== "undefined") {
@@ -975,32 +944,46 @@ function KingstonDashboard() {
   }, [lostFound, searchQuery])
 
   useEffect(() => {
-    localStorage.setItem("kingston-jobs", JSON.stringify(jobListings))
-  }, [jobListings])
+    if (mounted) {
+      localStorage.setItem("kingston-jobs", JSON.stringify(jobListings))
+    }
+  }, [jobListings, mounted])
 
   useEffect(() => {
-    localStorage.setItem("kingston-events", JSON.stringify(events))
-  }, [events])
+    if (mounted) {
+      localStorage.setItem("kingston-events", JSON.stringify(events))
+    }
+  }, [events, mounted])
 
   useEffect(() => {
-    localStorage.setItem("kingston-rentals", JSON.stringify(rentals))
-  }, [rentals])
+    if (mounted) {
+      localStorage.setItem("kingston-rentals", JSON.stringify(rentals))
+    }
+  }, [rentals, mounted])
 
   useEffect(() => {
-    localStorage.setItem("kingston-marketplace", JSON.stringify(marketplace))
-  }, [marketplace])
+    if (mounted) {
+      localStorage.setItem("kingston-marketplace", JSON.stringify(marketplace))
+    }
+  }, [marketplace, mounted])
 
   useEffect(() => {
-    localStorage.setItem("kingston-services", JSON.stringify(services))
-  }, [services])
+    if (mounted) {
+      localStorage.setItem("kingston-services", JSON.stringify(services))
+    }
+  }, [services, mounted])
 
   useEffect(() => {
-    localStorage.setItem("kingston-lost-found", JSON.stringify(lostFound))
-  }, [lostFound])
+    if (mounted) {
+      localStorage.setItem("kingston-lost-found", JSON.stringify(lostFound))
+    }
+  }, [lostFound, mounted])
 
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [messages])
+    if (mounted && chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }
+  }, [messages, mounted])
 
   const handlePostJob = () => {
     setActiveModal("job")
@@ -1158,6 +1141,18 @@ function KingstonDashboard() {
     if (confirm("Are you sure you want to delete this lost & found item?")) {
       setLostFound((prev) => prev.filter((item) => item.id !== id))
     }
+  }
+
+  // Don't render until mounted to avoid hydration issues
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading Kingston Connect...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -1754,13 +1749,14 @@ function KingstonDashboard() {
             </Button>
           </div>
           <div className="space-y-4">
-            {messages.length === 0 ? (
+            {messages && messages.length === 0 ? (
               <div className="flex flex-col items-start">
                 <div className="rounded-lg px-3 py-2 text-sm bg-gray-100 text-gray-800">
                   Hi! I'm Angie, your Kingston assistant. How can I help you today?
                 </div>
               </div>
             ) : (
+              messages &&
               messages.map((message) => (
                 <div
                   key={message.id}
@@ -1782,7 +1778,7 @@ function KingstonDashboard() {
             <div className="flex space-x-2">
               <Input
                 placeholder="Ask Angie anything..."
-                value={input}
+                value={input || ""}
                 onChange={handleInputChange}
                 className="flex-1"
               />
